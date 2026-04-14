@@ -33,16 +33,16 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="flex flex-col select-none pointer-events-none px-4 md:px-6">
+      <div className="flex flex-col select-none pointer-events-none px-6">
         <motion.h1 
-          className="text-massive font-display whitespace-nowrap -ml-8 md:-ml-20"
           style={{ x: x1 }}
+          className="text-massive font-display whitespace-nowrap -ml-20"
         >
           {t('hero.design')}
         </motion.h1>
         <motion.h1 
-          className="text-massive font-display whitespace-nowrap leading-none tracking-tighter self-end"
           style={{ x: x2 }}
+          className="text-[10.5vw] font-display whitespace-nowrap leading-none tracking-tighter self-end"
         >
           {t('hero.repeat')}
         </motion.h1>
