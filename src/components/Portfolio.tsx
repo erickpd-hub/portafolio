@@ -27,6 +27,18 @@ import sonx2 from "../assets/imgs/Sonx/2.PNG";
 import sonx3 from "../assets/imgs/Sonx/3.PNG";
 import sonx4 from "../assets/imgs/Sonx/4.PNG";
 
+import cmsPortada from "../assets/imgs/cms/portada.png";
+import cms1 from "../assets/imgs/cms/1.PNG";
+import cms2 from "../assets/imgs/cms/2.PNG";
+import cms3 from "../assets/imgs/cms/3.PNG";
+import cms4 from "../assets/imgs/cms/4.PNG";
+
+import agentePortada from "../assets/imgs/agente/portada.png";
+import agente1 from "../assets/imgs/agente/1.PNG";
+import agente2 from "../assets/imgs/agente/2.PNG";
+import agente3 from "../assets/imgs/agente/3.PNG";
+import agente4 from "../assets/imgs/agente/4.PNG";
+
 const projects = [
   { 
     id: 1, 
@@ -87,6 +99,36 @@ const projects = [
     architecture: "Client-Side Processing",
     githubUrl: "https://github.com",
     liveUrl: "https://sonx.vercel.app/"
+  },
+  { 
+    id: 5, 
+    title: "CMS", 
+    category: "HEADLESS CMS / DASHBOARD", 
+    size: "1x1", 
+    img: cmsPortada,
+    color: "#38bdf8",
+    screenshots: [cms1, cms2, cms3, cms4],
+    description: "Prototipo de sistema de gestión de contenido (CMS) intuitivo y modular, diseñado para optimizar flujos editoriales, administración de recursos y publicación en tiempo real.",
+    designType: "Modern / Utility & Clean",
+    techStack: ["React", "TypeScript", "Tailwind CSS", "Next.js"],
+    architecture: "Modular / Headless Architecture",
+    githubUrl: "https://github.com",
+    liveUrl: "https://cms-prototype-chi.vercel.app/"
+  },
+  { 
+    id: 6, 
+    title: "AGENTE", 
+    category: "AI AGENT / WORKFLOW", 
+    size: "1x1", 
+    img: agentePortada,
+    color: "#a855f7",
+    screenshots: [agente1, agente2, agente3, agente4],
+    description: "Plataforma de agentes inteligentes autónomos diseñada para automatizar tareas complejas, orquestación de flujos de trabajo e interacción conversacional en tiempo real.",
+    designType: "Dark Futuristic / Minimalist",
+    techStack: ["React", "TypeScript", "Node.js", "Tailwind CSS", "OpenAI / AI SDK"],
+    architecture: "Event-Driven / Serverless API",
+    githubUrl: "https://github.com",
+    liveUrl: "https://agente-alpha.vercel.app/"
   }
 ];
 
@@ -115,8 +157,8 @@ export default function Portfolio() {
         <span className="text-[10px] font-light tracking-widest-xl uppercase opacity-50">{t('portfolio.subtitle')}</span>
       </div>
 
-      <div className="flex flex-col md:flex-row h-auto md:h-[70vh] border-l border-t border-black w-full overflow-hidden">
-        {projects.slice(0, 4).map((project, index) => (
+      <div className="flex flex-col lg:flex-row h-auto lg:h-[70vh] border-l border-t border-black w-full overflow-hidden">
+        {projects.map((project, index) => (
           <motion.div
             key={project.id}
             initial={{ opacity: 0 }}
@@ -124,7 +166,7 @@ export default function Portfolio() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             onClick={() => openProject(project)}
-            className="relative flex-1 md:hover:flex-[3] transition-all duration-500 ease-in-out border-r border-b border-black overflow-hidden group cursor-pointer flex flex-col justify-between min-h-[300px] md:min-h-0"
+            className="relative flex-1 lg:hover:flex-[3] transition-all duration-500 ease-in-out border-r border-b border-black overflow-hidden group cursor-pointer flex flex-col justify-between min-h-[300px] lg:min-h-0"
           >
             <div className="relative z-10 p-6 md:p-8">
               <span className="text-[10px] font-light tracking-widest-xl uppercase text-white/70 group-hover:text-white transition-colors duration-300">

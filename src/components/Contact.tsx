@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
 import ContactModal from "./ContactModal";
+import cvPdf from "../assets/cv/ErickPDCVW.pdf";
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -69,7 +70,7 @@ export default function Contact() {
           <span className="text-[10px] font-light font-tech tracking-widest-xl uppercase block mb-4 opacity-50 group-hover:opacity-100">{t('contact.resume')}</span>
           <div className="flex flex-col gap-4">
             <a 
-              href="/ErickPDCV.pdf" 
+              href={cvPdf} 
               target="_blank"
               rel="noopener noreferrer"
               className="group/cv"
@@ -79,7 +80,7 @@ export default function Contact() {
               </p>
             </a>
             <a 
-              href="/ErickPDCV.pdf" 
+              href={cvPdf} 
               target="_blank"
               rel="noopener noreferrer" 
               className="w-12 h-12 border-2 border-current rounded-full flex items-center justify-center font-light font-tech hover:bg-white hover:text-black transition-all duration-300 transform hover:rotate-90"

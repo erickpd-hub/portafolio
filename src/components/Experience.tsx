@@ -10,7 +10,7 @@ export default function Experience() {
       year: t('experience.role1.date'),
       title: t('experience.role1.title'),
       company: t('experience.role1.company'),
-      location: "Remote",
+      location: t('experience.role1.location'),
       description: t('experience.role1.desc'),
       current: true
     },
@@ -18,7 +18,7 @@ export default function Experience() {
       year: t('experience.role2.date'),
       title: t('experience.role2.title'),
       company: t('experience.role2.company'),
-      location: "Monterrey, MX",
+      location: t('experience.role2.location'),
       description: t('experience.role2.desc')
     },
   ];

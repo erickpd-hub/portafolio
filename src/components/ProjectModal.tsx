@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
-import { X, Github, ExternalLink, ArrowLeft } from "lucide-react";
+import { X, Github, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Project {
   id: number;
@@ -26,10 +26,23 @@ interface ProjectModalProps {
 
 export default function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
   const { t } = useLanguage();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  const screenshots = project?.screenshots && project.screenshots.length > 0
+    ? project.screenshots
+    : project
+    ? [
+        `https://picsum.photos/seed/${project.id}-1/1200/800`,
+        `https://picsum.photos/seed/${project.id}-2/1200/800`,
+        `https://picsum.photos/seed/${project.id}-3/1200/800`,
+        `https://picsum.photos/seed/${project.id}-4/1200/800`,
+      ]
+    : [];
+
+  const allImages = project ? [project.img, ...screenshots] : [];
 
   useEffect(() => {
-    if (isOpen || selectedImage) {
+    if (isOpen || selectedImageIndex !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -37,7 +50,38 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, selectedImage]);
+  }, [isOpen, selectedImageIndex]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedImageIndex(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      if (e.key === "Escape") {
+        if (selectedImageIndex !== null) {
+          setSelectedImageIndex(null);
+        } else {
+          onClose();
+        }
+      } else if (selectedImageIndex !== null && allImages.length > 0) {
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          setSelectedImageIndex((prev) => (prev !== null ? (prev + 1) % allImages.length : null));
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          setSelectedImageIndex((prev) => (prev !== null ? (prev - 1 + allImages.length) % allImages.length : null));
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, selectedImageIndex, allImages.length, onClose]);
 
   if (!project) return null;
 
@@ -109,7 +153,7 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 }}
                   className="aspect-square bg-neutral-100 overflow-hidden border border-black cursor-zoom-in"
-                  onClick={() => setSelectedImage(project.img)}
+                  onClick={() => setSelectedImageIndex(0)}
                 >
                   <img 
                     src={project.img} 
@@ -146,19 +190,14 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
               <div className="space-y-12">
                 <h3 className="text-4xl font-light font-serif uppercase tracking-tighter">{t('portfolio.view')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {(project.screenshots || [
-                    `https://picsum.photos/seed/${project.id}-1/1200/800`,
-                    `https://picsum.photos/seed/${project.id}-2/1200/800`,
-                    `https://picsum.photos/seed/${project.id}-3/1200/800`,
-                    `https://picsum.photos/seed/${project.id}-4/1200/800`,
-                  ]).map((src, idx) => (
+                  {screenshots.map((src, idx) => (
                     <motion.div 
                       key={idx}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       className="aspect-video bg-neutral-100 border border-black overflow-hidden cursor-zoom-in"
-                      onClick={() => setSelectedImage(src)}
+                      onClick={() => setSelectedImageIndex(idx + 1)}
                     >
                       <img 
                         src={src} 
@@ -189,37 +228,83 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
       </AnimatePresence>
 
       <AnimatePresence>
-        {selectedImage && (
+        {selectedImageIndex !== null && allImages[selectedImageIndex] && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+            onClick={() => setSelectedImageIndex(null)}
+            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-12 select-none"
           >
-            <motion.button
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-8 right-8 text-white hover:rotate-90 transition-transform duration-300"
+            {/* Close button */}
+            <button
+              className="absolute top-20 right-6 md:top-24 md:right-10 p-3 text-white/90 hover:text-white bg-black/70 hover:bg-black border border-white/30 hover:border-white rounded-full transition-all duration-300 hover:rotate-90 cursor-pointer z-30 shadow-2xl backdrop-blur-sm"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedImage(null);
+                setSelectedImageIndex(null);
               }}
+              aria-label="Cerrar (Esc)"
+              title="Cerrar (Esc)"
             >
-              <X size={40} />
-            </motion.button>
-            
-            <motion.img
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              src={selectedImage}
-              alt="Project detail"
-              className="max-w-full max-h-full object-contain shadow-2xl"
-              referrerPolicy="no-referrer"
+              <X size={26} />
+            </button>
+
+            {/* Prev button */}
+            {allImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedImageIndex((prev) => (prev !== null ? (prev - 1 + allImages.length) % allImages.length : null));
+                }}
+                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 md:p-4 text-white/80 hover:text-white bg-black/50 hover:bg-black border border-white/20 hover:border-white rounded-full transition-all duration-300 hover:scale-110 cursor-pointer z-20"
+                aria-label="Anterior (←)"
+                title="Anterior (←)"
+              >
+                <ChevronLeft size={28} />
+              </button>
+            )}
+
+            {/* Next button */}
+            {allImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedImageIndex((prev) => (prev !== null ? (prev + 1) % allImages.length : null));
+                }}
+                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 md:p-4 text-white/80 hover:text-white bg-black/50 hover:bg-black border border-white/20 hover:border-white rounded-full transition-all duration-300 hover:scale-110 cursor-pointer z-20"
+                aria-label="Siguiente (→)"
+                title="Siguiente (→)"
+              >
+                <ChevronRight size={28} />
+              </button>
+            )}
+
+            {/* Current Image with animation */}
+            <div 
+              className="relative max-w-full max-h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
-            />
+            >
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={selectedImageIndex}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  src={allImages[selectedImageIndex]}
+                  alt={`Screenshot ${selectedImageIndex + 1}`}
+                  className="max-w-[90vw] max-h-[85vh] object-contain shadow-2xl border border-white/10"
+                  referrerPolicy="no-referrer"
+                />
+              </AnimatePresence>
+            </div>
+
+            {/* Counter and keyboard hint */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 bg-black/70 border border-white/20 rounded-full text-white text-xs font-mono tracking-widest pointer-events-none z-20">
+              <span>{selectedImageIndex + 1} / {allImages.length}</span>
+              <span className="text-white/40 hidden sm:inline">|</span>
+              <span className="text-white/60 text-[10px] hidden sm:inline">ESC para salir • ← → para navegar</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
